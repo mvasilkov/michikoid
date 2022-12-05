@@ -1,0 +1,16 @@
+{
+  "name": "michikoid",
+  "version": "0.0.0",
+  "description": "Michikoid",
+  "exports": {
+    ".": "./app.js"
+  },
+  "type": "module",
+  "repository": "git@github.com:mvasilkov/michikoid.git",
+  "author": "Mark Vasilkov (https://github.com/mvasilkov)",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/generator": "^7.20.5",
+    "@babel/parser": "^7.20.5"
+  }
+}
