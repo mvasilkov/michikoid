@@ -3,6 +3,7 @@
 import { argv } from 'node:process'
 import fs from 'node:fs'
 import { resolve } from 'node:path'
+import chalk from 'chalk'
 import { parse } from '@babel/parser'
 // — Mom, can I have ECMAScript modules?
 // — No, we have ECMAScript modules at home.
@@ -12,6 +13,15 @@ import pkg2 from '@babel/traverse'
 
 const { default: generate } = pkg
 const { default: traverse } = pkg2
+
+function printTitle(...args) {
+    console.log()
+    console.log(chalk.greenBright(...args))
+}
+
+function printWarning(...args) {
+    console.log(chalk.bgYellowBright.black(...args))
+}
 
 function main() {
     argv.slice(2).forEach(a => {
@@ -38,17 +48,17 @@ function main() {
                         return
                 }
                 const N = opt[1] ? parseInt(opt[1]) : 1
-                console.log(`Michikoid found Inline(${N})`)
-                console.log(generate(decl, { comments: false }, js).code)
+                printTitle(`Michikoid found Inline(${N})`)
+                console.log(js.slice(decl.start, decl.trailingComments[0].end))
 
                 const { name } = decl.declarations[0].id
                 const binding = path.scope.getBinding(name)
                 if (!binding.referenced) {
-                    console.log('Not referenced, skipping')
+                    printWarning('Not referenced, skipping')
                     return
                 }
                 else if (binding.references !== N) {
-                    console.log(`Want ${N} references, got ${binding.references} instead, skipping`)
+                    printWarning(`Want ${N} references, got ${binding.references} instead, skipping`)
                     return
                 }
             },
