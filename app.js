@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import { resolve } from 'node:path'
 import chalk from 'chalk'
 import { parse } from '@babel/parser'
+import { cloneNode } from '@babel/types'
 // — Mom, can I have ECMAScript modules?
 // — No, we have ECMAScript modules at home.
 // ECMAScript modules at home:
@@ -61,6 +62,13 @@ function main() {
                     printWarning(`Want ${N} references, got ${binding.references} instead, skipping`)
                     return
                 }
+
+                const { init } = decl.declarations[0]
+                binding.referencePaths.forEach(p => {
+                    p.replaceWith(cloneNode(init))
+                })
+
+                path.remove()
             },
         })
         const result = generate(ast, {}, js).code
