@@ -13,10 +13,10 @@
   "author": "Mark Vasilkov (https://github.com/mvasilkov)",
   "license": "MIT",
   "dependencies": {
-    "@babel/generator": "^7.20.5",
-    "@babel/parser": "^7.20.5",
-    "@babel/traverse": "^7.20.5",
-    "@babel/types": "^7.20.5",
-    "chalk": "^5.1.2"
+    "@babel/generator": "^7.20.7",
+    "@babel/parser": "^7.20.7",
+    "@babel/traverse": "^7.20.10",
+    "@babel/types": "^7.20.7",
+    "chalk": "^5.2.0"
   }
 }

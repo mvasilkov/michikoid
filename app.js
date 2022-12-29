@@ -34,9 +34,7 @@ function main() {
         }
 
         const js = fs.readFileSync(a, 'utf-8')
-        const ast = parse(js, {
-            sourceType: 'module',
-        })
+        const ast = parse(js, { sourceType: 'module' })
         traverse(ast, {
             VariableDeclaration(path) {
                 const decl = path.node
@@ -68,10 +66,11 @@ function main() {
                     p.replaceWith(cloneNode(init))
                 })
 
+                path.getNextSibling().node?.leadingComments?.shift()
                 path.remove()
             },
         })
-        const result = generate(ast, {}, js).code
+        const result = generate(ast, { /* retainLines: true */ }, js).code
 
         fs.writeFileSync(a, result, 'utf-8')
     })
