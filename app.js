@@ -24,8 +24,8 @@ function printWarning(...args) {
     console.log(chalk.bgYellowBright.black(...args))
 }
 
-function main() {
-    argv.slice(2).forEach(a => {
+function main(paths) {
+    paths.forEach(a => {
         a = resolve(a)
 
         if (!fs.statSync(a).isFile()) {
@@ -76,4 +76,4 @@ function main() {
     })
 }
 
-main()
+main(argv.slice(2))
