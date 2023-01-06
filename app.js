@@ -16,12 +16,28 @@ const { default: generate } = pkg
 const { default: traverse } = pkg2
 
 function printTitle(...args) {
-    console.log()
     console.log(chalk.greenBright(...args))
 }
 
 function printWarning(...args) {
     console.log(chalk.bgYellowBright.black(...args))
+}
+
+function nodesEqual(a, b) {
+    if (a.type !== b.type) return false
+    switch (a.type) {
+        case 'Identifier':
+            return a.name === b.name
+
+        case 'MemberExpression':
+            return nodesEqual(a.object, b.object) && nodesEqual(a.property, b.property)
+
+        case 'ThisExpression':
+            return true
+
+        default:
+            throw Error(`NotImplemented: nodesEqual() for type ${a.type}`)
+    }
 }
 
 function main(paths) {
@@ -68,6 +84,28 @@ function main(paths) {
 
                 path.getNextSibling().node?.leadingComments?.shift()
                 path.remove()
+            },
+            ExpressionStatement(path) {
+                const decl = path.node
+                switch (false) {
+                    case decl.trailingComments?.[0]?.type === 'CommentLine':
+                    case decl.trailingComments?.[0]?.value === ' InlineExp':
+                    case decl.expression.type === 'AssignmentExpression':
+                        return
+                }
+                printTitle('Michikoid found InlineExp')
+                console.log(js.slice(decl.start, decl.trailingComments[0].end))
+
+                // POC
+                path.scope.path.traverse({
+                    enter(path) {
+                        // path.stop()
+                        if (path.node.start === decl.expression.left.start) return
+                        if (nodesEqual(path.node, decl.expression.left)) {
+                            console.log(path.node)
+                        }
+                    },
+                })
             },
         })
         const result = generate(ast, { /* retainLines: true */ }, js).code
