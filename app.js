@@ -96,16 +96,26 @@ function main(paths) {
                 printTitle('Michikoid found InlineExp')
                 console.log(js.slice(decl.start, decl.trailingComments[0].end))
 
-                // POC
+                let targetPath = null
                 path.scope.path.traverse({
                     enter(path) {
-                        // path.stop()
-                        if (path.node.start === decl.expression.left.start) return
-                        if (nodesEqual(path.node, decl.expression.left)) {
-                            console.log(path.node)
-                        }
+                        if (path.node.start <= decl.expression.left.start ||
+                            !nodesEqual(path.node, decl.expression.left)) return
+
+                        targetPath = path
+                        path.stop()
                     },
                 })
+
+                if (targetPath === null) {
+                    printWarning('Not referenced, skipping')
+                    return
+                }
+
+                targetPath.replaceWith(cloneNode(decl.expression))
+
+                path.getNextSibling().node?.leadingComments?.shift()
+                path.remove()
             },
         })
         const result = generate(ast, { /* retainLines: true */ }, js).code
