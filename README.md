@@ -46,3 +46,24 @@ console.log(this.value)
 
 console.log(this.value = 255)
 ```
+
+### RewriteProps
+
+The *RewriteProps* macro updates property accessors to use different property names. It should be placed on the first line of a block.
+
+```js
+ini() {
+  // RewriteProps(r=x, g=y, b=z)
+  this.r = 255
+  this['g'] = 0
+  this.b = 128
+}
+
+// Result:
+
+ini() {
+  this.x = 255
+  this['y'] = 0
+  this.z = 128
+}
+```
