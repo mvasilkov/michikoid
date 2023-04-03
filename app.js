@@ -6,6 +6,7 @@ import { resolve } from 'node:path'
 import chalk from 'chalk'
 import { parse } from '@babel/parser'
 import { cloneNode } from '@babel/types'
+import { outdent } from '@mvasilkov/outdent'
 // — Mom, can I have ECMAScript modules?
 // — No, we have ECMAScript modules at home.
 // ECMAScript modules at home:
@@ -58,7 +59,7 @@ function findComments(nodes, leadingTrailing, value) {
 
 const Macros = {
     Inline: {
-        VariableDeclaration(path) {
+        VariableDeclaration(js, path) {
             const decl = path.node
             let opt
             switch (false) {
@@ -93,7 +94,7 @@ const Macros = {
         },
     },
     InlineExp: {
-        ExpressionStatement(path) {
+        ExpressionStatement(js, path) {
             const decl = path.node
             switch (false) {
                 case decl.trailingComments?.[0]?.type === 'CommentLine':
@@ -127,7 +128,7 @@ const Macros = {
         },
     },
     RewriteProps: {
-        BlockStatement(path) {
+        BlockStatement(js, path) {
             const decl = path.node
             const firstComment = decl.body[0]?.leadingComments?.[0]
             let opt
@@ -166,10 +167,39 @@ const Macros = {
         },
     },
     DeadCode: {
-        BlockStatement(path) {
+        BlockStatement(js, path) {
             const decl = path.node
             const startIndices = findComments(decl.body, 'leading', ' DeadCode')
             const endIndices = findComments(decl.body, 'trailing', ' EndDeadCode')
+
+            if (startIndices.length !== endIndices.length) {
+                printWarning('Mismatched DeadCode and EndDeadCode, skipping')
+                return
+            }
+
+            while (startIndices.length !== 0) {
+                printTitle('Michikoid found DeadCode')
+
+                const start = startIndices.pop()
+                const end = endIndices.pop()
+                if (end.n < start.n) {
+                    printWarning('EndDeadCode before DeadCode, skipping')
+                    return
+                }
+
+                console.log(outdent(js.slice(
+                    decl.body[start.n].leadingComments[start.c].start,
+                    decl.body[end.n].trailingComments[end.c].end)))
+
+                decl.body[start.n - 1]?.trailingComments.splice(start.c)
+                decl.body[start.n].leadingComments.splice(start.c)
+                decl.body[end.n].trailingComments.splice(0, end.c + 1)
+                decl.body[end.n + 1]?.leadingComments.splice(0, end.c + 1)
+
+                for (let n = end.n; n >= start.n; --n) {
+                    path.get(`body.${n}`).remove()
+                }
+            }
         },
     },
 }
@@ -187,14 +217,14 @@ function main(paths) {
         const ast = parse(js, { sourceType: 'module' })
         traverse(ast, {
             VariableDeclaration(path) {
-                Macros.Inline.VariableDeclaration(path)
+                Macros.Inline.VariableDeclaration(js, path)
             },
             ExpressionStatement(path) {
-                Macros.InlineExp.ExpressionStatement(path)
+                Macros.InlineExp.ExpressionStatement(js, path)
             },
             BlockStatement(path) {
-                Macros.DeadCode.BlockStatement(path)
-                Macros.RewriteProps.BlockStatement(path)
+                Macros.DeadCode.BlockStatement(js, path)
+                Macros.RewriteProps.BlockStatement(js, path)
             },
         })
         const result = generate(ast, { /* retainLines: true */ }, js).code

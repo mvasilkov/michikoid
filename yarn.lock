@@ -136,6 +136,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@mvasilkov/outdent@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@mvasilkov/outdent/-/outdent-1.0.5.tgz#081e9fec4d3acae330d75ac4546cf4289f956cd4"
+  integrity sha512-jd7927l+hvKR6KZ/fc5MKh0qT1YtLU40HCDzRuWcESYGkRAcR/fr5D5It7gKM5vLlgjlAiJilfLLmd84XAfI9Q==
+
 ansi-styles@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-3.2.1.tgz#41fbb20243e50b12be0f04b8dedbf07520ce841d"
