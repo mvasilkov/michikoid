@@ -15,12 +15,12 @@ import pkg2 from '@babel/traverse'
 const { default: generate } = pkg
 const { default: traverse } = pkg2
 
-function printTitle(...args) {
-    console.log(chalk.greenBright(...args))
+function printTitle(...a) {
+    console.log(chalk.greenBright(...a))
 }
 
-function printWarning(...args) {
-    console.log(chalk.bgYellowBright.black(...args))
+function printWarning(...a) {
+    console.log(chalk.bgYellowBright.black(...a))
 }
 
 function nodesEqual(a, b) {
@@ -38,6 +38,22 @@ function nodesEqual(a, b) {
         default:
             throw Error(`NotImplemented: nodesEqual() for type ${a.type}`)
     }
+}
+
+function findComments(nodes, leadingTrailing, value) {
+    const indices = []
+
+    nodes.forEach((node, n) => {
+        const comments = node[leadingTrailing + 'Comments']
+        if (!Array.isArray(comments)) return
+        comments.forEach((comment, c) => {
+            if (comment.type === 'CommentLine' && comment.value === value) {
+                indices.push({ n, c })
+            }
+        })
+    })
+
+    return indices
 }
 
 const Macros = {
@@ -149,6 +165,13 @@ const Macros = {
             decl.body[0].leadingComments.shift()
         },
     },
+    DeadCode: {
+        BlockStatement(path) {
+            const decl = path.node
+            const startIndices = findComments(decl.body, 'leading', ' DeadCode')
+            const endIndices = findComments(decl.body, 'trailing', ' EndDeadCode')
+        },
+    },
 }
 
 function main(paths) {
@@ -170,6 +193,7 @@ function main(paths) {
                 Macros.InlineExp.ExpressionStatement(path)
             },
             BlockStatement(path) {
+                Macros.DeadCode.BlockStatement(path)
                 Macros.RewriteProps.BlockStatement(path)
             },
         })
