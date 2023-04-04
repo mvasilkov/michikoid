@@ -23,7 +23,7 @@ Michikoid understands the following macros:
 The *Inline* macro takes a `const` declaration and inlines it into the output.
 
 ```js
-const value = 255 // Inline(1)
+const value = 255 // .Inline(1)
 console.log(value)
 
 // Result:
@@ -39,7 +39,7 @@ The *InlineExp* macro takes an assignment expression and inlines it into the nex
 <!-- The *InlineExp* macro replaces the next occurrence of the left-hand side of an assignment expression with the expression itself. -->
 
 ```js
-this.value = 255 // InlineExp
+this.value = 255 // .InlineExp
 console.log(this.value)
 
 // Result:
@@ -53,7 +53,7 @@ The *RewriteProps* macro updates property accessors to use different property na
 
 ```js
 ini() {
-  // RewriteProps(r=x, g=y, b=z)
+  // .RewriteProps(r=x, g=y, b=z)
   this.r = 255
   this['g'] = 0
   this.b = 128
@@ -66,4 +66,19 @@ ini() {
   this['y'] = 0
   this.z = 128
 }
+```
+
+### DeadCode
+
+The *DeadCode* macro removes all statements between itself and the nearest *EndDeadCode* macro on the same level of indentation.
+
+```js
+const value = 255
+// .DeadCode
+console.log(value)
+// .EndDeadCode
+
+// Result:
+
+const value = 255
 ```

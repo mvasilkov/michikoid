@@ -64,7 +64,7 @@ const Macros = {
             let opt
             switch (false) {
                 case decl.trailingComments?.[0]?.type === 'CommentLine':
-                case (opt = decl.trailingComments?.[0]?.value?.match(/^ Inline(?:\((\d+)\))?$/)) ?? false:
+                case (opt = decl.trailingComments?.[0]?.value?.match(/^ \.Inline(?:\((\d+)\))?$/)) ?? false:
                 case decl.kind === 'const':
                 case decl.declarations.length === 1:
                     return
@@ -98,7 +98,7 @@ const Macros = {
             const decl = path.node
             switch (false) {
                 case decl.trailingComments?.[0]?.type === 'CommentLine':
-                case decl.trailingComments?.[0]?.value === ' InlineExp':
+                case decl.trailingComments?.[0]?.value === ' .InlineExp':
                 case decl.expression.type === 'AssignmentExpression':
                     return
             }
@@ -134,7 +134,7 @@ const Macros = {
             let opt
             switch (false) {
                 case firstComment?.type === 'CommentLine':
-                case (opt = firstComment.value?.match(/^ RewriteProps\((.*?)\)$/)) ?? false:
+                case (opt = firstComment.value?.match(/^ \.RewriteProps\((.*?)\)$/)) ?? false:
                     return
             }
             printTitle('Michikoid found RewriteProps')
@@ -169,8 +169,8 @@ const Macros = {
     DeadCode: {
         BlockStatement(js, path) {
             const decl = path.node
-            const startIndices = findComments(decl.body, 'leading', ' DeadCode')
-            const endIndices = findComments(decl.body, 'trailing', ' EndDeadCode')
+            const startIndices = findComments(decl.body, 'leading', ' .DeadCode')
+            const endIndices = findComments(decl.body, 'trailing', ' .EndDeadCode')
 
             if (startIndices.length !== endIndices.length) {
                 printWarning('Mismatched DeadCode and EndDeadCode, skipping')
