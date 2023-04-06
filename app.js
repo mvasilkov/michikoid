@@ -3,6 +3,7 @@
 import { argv } from 'node:process'
 import fs from 'node:fs'
 import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import chalk from 'chalk'
 import { parse } from '@babel/parser'
 import { cloneNode } from '@babel/types'
@@ -204,6 +205,23 @@ const Macros = {
     },
 }
 
+export function expandMacros(js) {
+    const ast = parse(js, { sourceType: 'module' })
+    traverse(ast, {
+        VariableDeclaration(path) {
+            Macros.Inline.VariableDeclaration(js, path)
+        },
+        ExpressionStatement(path) {
+            Macros.InlineExp.ExpressionStatement(js, path)
+        },
+        BlockStatement(path) {
+            Macros.DeadCode.BlockStatement(js, path)
+            Macros.RewriteProps.BlockStatement(js, path)
+        },
+    })
+    return generate(ast, { /* retainLines: true */ }, js).code
+}
+
 function main(paths) {
     paths.forEach(a => {
         a = resolve(a)
@@ -214,23 +232,19 @@ function main(paths) {
         }
 
         const js = fs.readFileSync(a, 'utf-8')
-        const ast = parse(js, { sourceType: 'module' })
-        traverse(ast, {
-            VariableDeclaration(path) {
-                Macros.Inline.VariableDeclaration(js, path)
-            },
-            ExpressionStatement(path) {
-                Macros.InlineExp.ExpressionStatement(js, path)
-            },
-            BlockStatement(path) {
-                Macros.DeadCode.BlockStatement(js, path)
-                Macros.RewriteProps.BlockStatement(js, path)
-            },
-        })
-        const result = generate(ast, { /* retainLines: true */ }, js).code
+        const result = expandMacros(js)
 
         fs.writeFileSync(a, result, 'utf-8')
     })
 }
 
-main(argv.slice(2))
+/** Is this script being run as an executable? */
+function cli() {
+    const path = fs.realpathSync(argv[1])
+    const url = pathToFileURL(path).href
+    return import.meta.url === url
+}
+
+if (cli()) {
+    main(argv.slice(2))
+}

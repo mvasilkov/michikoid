@@ -26,5 +26,8 @@
     "@babel/types": "^7.21.4",
     "@mvasilkov/outdent": "^1.0.5",
     "chalk": "^5.2.0"
+  },
+  "scripts": {
+    "test": "node --test"
   }
 }
