@@ -109,7 +109,7 @@ const Macros = {
             let targetPath = null
             path.scope.path.traverse({
                 enter(path) {
-                    if (path.node.start <= decl.expression.left.start ||
+                    if (path.node.start <= decl.expression.right.end ||
                         !nodesEqual(path.node, decl.expression.left)) return
 
                     targetPath = path

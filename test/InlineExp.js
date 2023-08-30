@@ -61,8 +61,22 @@ export class Constraint {
   }
 }`.replace('\n', '')
 
+const progIn4 = `
+export function bug() {
+  let t = 1
+  t = Math.atan2(t, t) // .InlineExp
+  console.log(t)
+}`.replace('\n', '')
+
+const progOut4 = `
+export function bug() {
+  let t = 1;
+  console.log(t = Math.atan2(t, t));
+}`.replace('\n', '')
+
 test('InlineExp', () => {
   assert.strictEqual(expandMacros(progIn1), progOut1)
   assert.strictEqual(expandMacros(progIn2), progOut2)
   assert.strictEqual(expandMacros(progIn3), progOut3)
+  assert.strictEqual(expandMacros(progIn4), progOut4)
 })
