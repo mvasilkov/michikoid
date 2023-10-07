@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { expandMacros } from '../app.js'
 
-const progIn = `
+const progIn1 = `
 export const splitCommaParams = array => {
   for (let i = array.length - 1; i >= 0; --i) {
     const param = array[i]; // .Inline(2)
@@ -12,7 +12,7 @@ export const splitCommaParams = array => {
   }
 };`.replace('\n', '')
 
-const progOut = `
+const progOut1 = `
 export const splitCommaParams = array => {
   for (let i = array.length - 1; i >= 0; --i) {
     if (array[i].includes(',')) {
@@ -20,6 +20,27 @@ export const splitCommaParams = array => {
     }
   }
 };`.replace('\n', '')
+
+const progIn2 = `
+export function countSetBits(n) {
+  const N = n // .Inline(3)
+  let count = 0;
+  while (N) {
+    count += N & 1;
+    N >>>= 1;
+  }
+  return count;
+}`.replace('\n', '')
+
+const progOut2 = `
+export function countSetBits(n) {
+  let count = 0;
+  while (n) {
+    count += n & 1;
+    n >>>= 1;
+  }
+  return count;
+}`.replace('\n', '')
 
 const progIncorrect1 = `
 export const splitCommaParams = array => {
@@ -42,7 +63,8 @@ export const splitCommaParams = array => {
 };`.replace('\n', '')
 
 test('Inline', () => {
-  assert.strictEqual(expandMacros(progIn), progOut)
+  assert.strictEqual(expandMacros(progIn1), progOut1)
+  assert.strictEqual(expandMacros(progIn2), progOut2)
 })
 
 test('Inline should do nothing if the number of instances is incorrect', () => {
