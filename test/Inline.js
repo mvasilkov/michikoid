@@ -42,10 +42,10 @@ export const splitCommaParams = array => {
 };`.replace('\n', '')
 
 test('Inline', () => {
-    assert.strictEqual(expandMacros(progIn), progOut)
+  assert.strictEqual(expandMacros(progIn), progOut)
 })
 
 test('Inline should do nothing if the number of instances is incorrect', () => {
-    assert.strictEqual(expandMacros(progIncorrect1), progIncorrect1)
-    assert.strictEqual(expandMacros(progIncorrect2), progIncorrect2)
+  assert.strictEqual(expandMacros(progIncorrect1), progIncorrect1)
+  assert.strictEqual(expandMacros(progIncorrect2), progIncorrect2)
 })

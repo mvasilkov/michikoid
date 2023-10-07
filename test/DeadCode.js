@@ -18,5 +18,5 @@ export function isPowerOf2(number) {
 }`.replace('\n', '')
 
 test('DeadCode', () => {
-    assert.strictEqual(expandMacros(progIn), progOut)
+  assert.strictEqual(expandMacros(progIn), progOut)
 })

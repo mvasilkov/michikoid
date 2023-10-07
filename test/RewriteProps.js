@@ -41,6 +41,6 @@ export const getPublicPackages = isExperimental => {
 };`.replace('\n', '')
 
 test('RewriteProps', () => {
-    assert.strictEqual(expandMacros(progIn1), progOut1)
-    assert.strictEqual(expandMacros(progIn2), progOut2)
+  assert.strictEqual(expandMacros(progIn1), progOut1)
+  assert.strictEqual(expandMacros(progIn2), progOut2)
 })
