@@ -18,6 +18,21 @@ michikoid <FILES>
 
 Michikoid understands the following macros:
 
+### Alias
+
+The *Alias* macro replaces all instances of a `const` identifier with a different identifier.
+
+```js
+const value = {n: 255}
+const alias = value // .Alias
+console.log(alias.n)
+
+// Result:
+
+const value = {n: 255}
+console.log(value.n)
+```
+
 ### Inline
 
 The *Inline* macro takes a `const` declaration and inlines it into the output.

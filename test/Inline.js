@@ -25,9 +25,9 @@ const progIn2 = `
 export function countSetBits(n) {
   const N = n // .Inline(3)
   let count = 0;
-  while (N) {
-    count += N & 1;
-    N >>>= 1;
+  while (N.value) {
+    count += N.value & 1;
+    N.value >>>= 1;
   }
   return count;
 }`.replace('\n', '')
@@ -35,9 +35,9 @@ export function countSetBits(n) {
 const progOut2 = `
 export function countSetBits(n) {
   let count = 0;
-  while (n) {
-    count += n & 1;
-    n >>>= 1;
+  while (n.value) {
+    count += n.value & 1;
+    n.value >>>= 1;
   }
   return count;
 }`.replace('\n', '')
