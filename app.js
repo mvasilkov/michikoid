@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/** This file is part of Michikoid.
+ * https://github.com/mvasilkov/michikoid
+ * @license MIT | Copyright (c) 2023 Mark Vasilkov
+ */
+
 import { argv } from 'node:process'
 import fs from 'node:fs'
 import { resolve } from 'node:path'
@@ -201,10 +206,10 @@ const Macros = {
         BlockStatement(js, path) {
             const decl = path.node
             const startIndices = findComments(decl.body, 'leading', ' .DeadCode')
-            const endIndices = findComments(decl.body, 'trailing', ' .EndDeadCode')
+            const endIndices = findComments(decl.body, 'trailing', ' .End(DeadCode)')
 
             if (startIndices.length !== endIndices.length) {
-                printWarning('Mismatched DeadCode and EndDeadCode, skipping')
+                printWarning('Mismatched DeadCode and End(DeadCode), skipping')
                 return
             }
 
@@ -214,7 +219,7 @@ const Macros = {
                 const start = startIndices.pop()
                 const end = endIndices.pop()
                 if (end.n < start.n) {
-                    printWarning('EndDeadCode before DeadCode, skipping')
+                    printWarning('End(DeadCode) before DeadCode, skipping')
                     return
                 }
 

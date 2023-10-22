@@ -85,13 +85,13 @@ ini() {
 
 ### DeadCode
 
-The *DeadCode* macro removes all statements between itself and the nearest *EndDeadCode* macro on the same level of indentation.
+The *DeadCode* macro removes all statements between itself and the nearest *End(DeadCode)* macro on the same level of indentation.
 
 ```js
 const value = 255
 // .DeadCode
 console.log(value)
-// .EndDeadCode
+// .End(DeadCode)
 
 // Result:
 

@@ -1,3 +1,8 @@
+/** This file is part of Michikoid.
+ * https://github.com/mvasilkov/michikoid
+ * @license MIT | Copyright (c) 2023 Mark Vasilkov
+ */
+
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { expandMacros } from '../app.js'
