@@ -79,9 +79,52 @@ export function bug() {
   console.log(t = Math.atan2(t, t));
 }`.replace('\n', '')
 
+const progIn5 = `
+export class Constraint {
+  constructor(v0, v1) {
+    this.v0 = v0
+    this.v1 = v1 // .InlineExp(RHS)
+    this.p0 = v0.position
+    this.p1 = v1.position
+    this.lengthSquared = this.p0.distanceSquared(this.p1)
+  }
+}`.replace('\n', '')
+
+const progOut5 = `
+export class Constraint {
+  constructor(v0, v1) {
+    this.v0 = v0;
+    this.p0 = v0.position;
+    this.p1 = (this.v1 = v1).position;
+    this.lengthSquared = this.p0.distanceSquared(this.p1);
+  }
+}`.replace('\n', '')
+
+const progIn6 = `
+export class Constraint {
+  constructor(v0, v1) {
+    this.v0 = v0 // .InlineExp(RHS)
+    this.v1 = v1 // .InlineExp(RHS)
+    this.p0 = v0.position
+    this.p1 = v1.position
+    this.lengthSquared = this.p0.distanceSquared(this.p1)
+  }
+}`.replace('\n', '')
+
+const progOut6 = `
+export class Constraint {
+  constructor(v0, v1) {
+    this.p0 = (this.v0 = v0).position;
+    this.p1 = (this.v1 = v1).position;
+    this.lengthSquared = this.p0.distanceSquared(this.p1);
+  }
+}`.replace('\n', '')
+
 test('InlineExp', () => {
   assert.strictEqual(expandMacros(progIn1), progOut1)
   assert.strictEqual(expandMacros(progIn2), progOut2)
   assert.strictEqual(expandMacros(progIn3), progOut3)
   assert.strictEqual(expandMacros(progIn4), progOut4)
+  assert.strictEqual(expandMacros(progIn5), progOut5)
+  assert.strictEqual(expandMacros(progIn6), progOut6)
 })

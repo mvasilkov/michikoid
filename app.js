@@ -132,20 +132,23 @@ const Macros = {
     InlineExp: {
         ExpressionStatement(js, path) {
             const decl = path.node
+            let opt
             switch (false) {
                 case decl.trailingComments?.[0]?.type === 'CommentLine':
-                case decl.trailingComments?.[0]?.value === ' .InlineExp':
+                case (opt = decl.trailingComments?.[0]?.value?.match(/^ \.InlineExp(?:\((RHS)\))?$/)) ?? false:
                 case decl.expression.type === 'AssignmentExpression':
                     return
             }
-            printTitle('Michikoid found InlineExp')
+            const rhs = opt[1] === 'RHS'
+            printTitle(`Michikoid found InlineExp${rhs ? '(RHS)' : ''}`)
             console.log(js.slice(decl.start, decl.trailingComments[0].end))
 
+            const inlineNode = rhs ? decl.expression.right : decl.expression.left
             let targetPath = null
             path.scope.path.traverse({
                 enter(path) {
                     if (path.node.start <= decl.expression.right.end ||
-                        !nodesEqual(path.node, decl.expression.left)) return
+                        !nodesEqual(path.node, inlineNode)) return
 
                     targetPath = path
                     path.stop()
