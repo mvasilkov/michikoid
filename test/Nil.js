@@ -17,6 +17,6 @@ export function countSetBits(n) {
   return count;
 }`.replace('\n', '')
 
-test('In the absence of macros, expandMacros should be an identity function', () => {
+test('In the absence of macros, expandMacros should behave like an identity function', () => {
   assert.strictEqual(expandMacros(prog), prog)
 })

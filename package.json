@@ -1,6 +1,6 @@
 {
   "name": "michikoid",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Michikoid is a JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.",
   "keywords": [
     "macro",
@@ -10,7 +10,8 @@
     "inline"
   ],
   "files": [
-    "app.js"
+    "app.js",
+    "macros"
   ],
   "exports": {
     ".": "./app.js"
@@ -24,10 +25,10 @@
   "author": "Mark Vasilkov (https://github.com/mvasilkov)",
   "license": "MIT",
   "dependencies": {
-    "@babel/generator": "^7.23.6",
-    "@babel/parser": "^7.23.9",
-    "@babel/traverse": "^7.23.9",
-    "@babel/types": "^7.23.9",
+    "@babel/generator": "^8.0.0-alpha.6",
+    "@babel/parser": "^8.0.0-alpha.6",
+    "@babel/traverse": "^8.0.0-alpha.6",
+    "@babel/types": "^8.0.0-alpha.6",
     "@mvasilkov/outdent": "^1.0.5",
     "chalk": "^5.3.0"
   },

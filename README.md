@@ -20,7 +20,7 @@ Michikoid understands the following macros:
 
 ### Alias
 
-The *Alias* macro replaces all instances of a `const` identifier with a different identifier.
+The *Alias* macro replaces all occurrences of a `const` identifier with a different identifier.
 
 ```js
 const value = {n: 255}
@@ -46,12 +46,11 @@ console.log(value)
 console.log(255)
 ```
 
-The argument to *Inline* is the exact number of `const` instances to replace. This is to prevent code drift.
+The argument to *Inline* is the number of `const` occurrences to replace. This is to prevent code drift.
 
 ### InlineExp
 
-The *InlineExp* macro takes an assignment expression and inlines it into the next instance of the expression's left-hand side.
-<!-- The *InlineExp* macro replaces the next occurrence of the left-hand side of an assignment expression with the expression itself. -->
+The *InlineExp* macro inlines an assignment expression into the next occurrence of the expression's left-hand side.
 
 ```js
 this.value = 255 // .InlineExp
@@ -60,6 +59,19 @@ console.log(this.value)
 // Result:
 
 console.log(this.value = 255)
+```
+
+### InlineExp(RHS)
+
+The *InlineExp(RHS)* macro variant inlines an assignment expression into the next occurrence of the expression's right-hand side.
+
+```js
+this.value = 128 // .InlineExp(RHS)
+console.log(128)
+
+// Result:
+
+console.log(this.value = 128)
 ```
 
 ### RewriteProps
