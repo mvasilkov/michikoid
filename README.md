@@ -1,6 +1,10 @@
 # Michikoid
 
-*Michikoid* is a JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.
+*Michikoid* is a TypeScript and JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.
+
+The app is based on the excellent [ts-morph][ts-morph] library.
+
+[ts-morph]: https://github.com/dsherret/ts-morph
 
 ## Installation
 
@@ -10,11 +14,30 @@ npm install -g michikoid
 
 ## Usage
 
+Pass a <kbd>tsconfig.json</kbd> file to work on an entire project and save changes to a different directory.
+
 ```sh
-michikoid <FILES>
+michikoid --project <tsconfig> <out_dir>
 ```
 
-## Supported macros
+Alternatively, pass a <kbd>.ts</kbd> or <kbd>.js</kbd> file to handle it with default settings and print to the standard output.
+
+```sh
+michikoid <file>
+```
+
+The default settings are:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ES2022"
+  }
+}
+```
+
+## Macros
 
 Michikoid understands the following macros:
 
@@ -27,7 +50,7 @@ const value = {n: 255}
 const alias = value // .Alias
 console.log(alias.n)
 
-// Result:
+// Expands to:
 
 const value = {n: 255}
 console.log(value.n)
@@ -41,71 +64,46 @@ The *Inline* macro takes a `const` declaration and inlines it into the output.
 const value = 255 // .Inline(1)
 console.log(value)
 
-// Result:
+// Expands to:
 
 console.log(255)
 ```
 
-The argument to *Inline* is the number of `const` occurrences to replace. This is to prevent code drift.
-
 ### InlineExp
 
-The *InlineExp* macro inlines an assignment expression into the next occurrence of the expression's left-hand side.
+The *InlineExp* macro inlines an assignment expression into the next occurrence of that expression's left-hand side. Can also be spelled as *InlineExpLeft*.
 
 ```js
 this.value = 255 // .InlineExp
 console.log(this.value)
 
-// Result:
+// Expands to:
 
 console.log(this.value = 255)
 ```
 
-### InlineExp(RHS)
+### InlineExpRight
 
-The *InlineExp(RHS)* macro variant inlines an assignment expression into the next occurrence of the expression's right-hand side.
+The *InlineExpRight* macro variant inlines an assignment expression into the next occurrence of that expression's right-hand side.
 
 ```js
-this.value = 128 // .InlineExp(RHS)
+this.value = 128 // .InlineExpRight
 console.log(128)
 
-// Result:
+// Expands to:
 
 console.log(this.value = 128)
 ```
 
-### RewriteProps
-
-The *RewriteProps* macro updates property accessors to use different property names. It should be placed on the first line of a block.
-
-```js
-ini() {
-  // .RewriteProps(r=x, g=y, b=z)
-  this.r = 255
-  this['g'] = 0
-  this.b = 128
-}
-
-// Result:
-
-ini() {
-  this.x = 255
-  this['y'] = 0
-  this.z = 128
-}
-```
-
 ### DeadCode
 
-The *DeadCode* macro removes all statements between itself and the nearest *End(DeadCode)* macro on the same level of indentation.
+The *DeadCode* macro deletes the statement it's applied to.
 
 ```js
 const value = 255
-// .DeadCode
-console.log(value)
-// .End(DeadCode)
+console.log(value) // .DeadCode
 
-// Result:
+// Expands to:
 
 const value = 255
 ```
