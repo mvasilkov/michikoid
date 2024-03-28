@@ -47,8 +47,18 @@ const out3 = `
 console.log(('type' + 'script').length)
 `
 
+const in4 = `
+const a = 'type' + 'script' // .Alias
+const b = [a] // .Alias
+console.log(b)
+`
+const out4 = `
+console.log(['type' + 'script'])
+`
+
 test('Alias', () => {
     assert.equal(expandMacrosInString(in1), out1)
     assert.equal(expandMacrosInString(in2), out2)
     assert.equal(expandMacrosInString(in3), out3)
+    assert.equal(expandMacrosInString(in4), out4)
 })

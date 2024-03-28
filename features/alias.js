@@ -6,7 +6,7 @@
 
 import { ts } from 'ts-morph'
 
-import { nodeInParentheses, nodeNeedsParentheses } from './shared.js'
+import { replace } from './shared.js'
 
 const unlimited = -1
 
@@ -66,19 +66,18 @@ export function expandAlias(file) {
             return
         }
 
-        const decl = decls[0]
-        if (!decl.hasInitializer()) {
-            console.log('Expected initializer')
-            return
-        }
-
+        const decl = decls.pop()
         const alias = decl.getNameNode()
         if (!alias.isKind(ts.SyntaxKind.Identifier)) {
             console.log('Expected identifier')
             return
         }
 
-        const value = decl.getInitializerOrThrow()
+        const value = decl.getInitializer()
+        if (!value) {
+            console.log('Expected initializer')
+            return
+        }
 
         /**
          * @type {import('ts-morph').Node<ts.Node>[]}
@@ -89,12 +88,7 @@ export function expandAlias(file) {
             return
         }
 
-        refs.forEach(ref => {
-            ref.replaceWithText(
-                nodeNeedsParentheses(value) && !nodeInParentheses(ref) ?
-                    '(' + value.getText() + ')' : value.getText()
-            )
-        })
+        refs.forEach(ref => replace(ref, value))
 
         def.remove()
     })

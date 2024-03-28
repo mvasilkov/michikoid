@@ -6,7 +6,7 @@
 
 import { ts } from 'ts-morph'
 
-import { nodeInParentheses, nodeNeedsParentheses, nodesEqual } from './shared.js'
+import { nodesEqual, replace } from './shared.js'
 
 /**
  * @param {import('ts-morph').ExpressionStatement} expstat
@@ -65,10 +65,8 @@ export function expandInlineExp(file) {
             return
         }
 
-        found.replaceWithText(
-            nodeNeedsParentheses(exp) && !nodeInParentheses(found) ?
-                '(' + exp.getText() + ')' : exp.getText()
-        )
+        replace(found, exp)
+
         expstat.remove()
     })
 }

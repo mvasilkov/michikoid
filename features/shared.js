@@ -19,17 +19,20 @@ export function nodesEqual(a, b) {
  * @param {import('ts-morph').Node<ts.Node>} node
  * @returns {boolean}
  */
-export function nodeInParentheses(node) {
+function nodeInParentheses(node) {
     const file = node.getSourceFile()
-    return file.getDescendantAtPos(node.getStart() - 1)?.getKind() === ts.SyntaxKind.OpenParenToken &&
-        file.getDescendantAtPos(node.getEnd())?.getKind() === ts.SyntaxKind.CloseParenToken
+    const before = file.getDescendantAtPos(node.getStart() - 1)?.getKind()
+    const after = file.getDescendantAtPos(node.getEnd())?.getKind()
+
+    return before === ts.SyntaxKind.OpenParenToken && after === ts.SyntaxKind.CloseParenToken ||
+        before === ts.SyntaxKind.OpenBracketToken && after === ts.SyntaxKind.CloseBracketToken
 }
 
 /**
  * @param {import('ts-morph').Node<ts.Node>} node
  * @returns {boolean}
  */
-export function nodeNeedsParentheses(node) {
+function nodeNeedsParentheses(node) {
     switch (node.getKind()) {
         // Missing: new with argument list, different literals
         case ts.SyntaxKind.CallExpression:
@@ -41,4 +44,15 @@ export function nodeNeedsParentheses(node) {
             return false
     }
     return true
+}
+
+/**
+ * @param {import('ts-morph').Node<ts.Node>} old
+ * @param {import('ts-morph').Node<ts.Node>} updated
+ */
+export function replace(old, updated) {
+    old.replaceWithText(
+        nodeNeedsParentheses(updated) && !nodeInParentheses(old) ?
+            '(' + updated.getText() + ')' : updated.getText()
+    )
 }
