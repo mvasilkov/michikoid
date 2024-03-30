@@ -1,10 +1,17 @@
 # Michikoid
 
-*Michikoid* is a TypeScript and JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.
+<img src="https://raw.githubusercontent.com/mvasilkov/michikoid/master/files/michikoid.jpeg" height="256" width="256">
+
+[*Michikoid*][git] is a TypeScript and JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.
 
 The app is based on the excellent [ts-morph][ts-morph] library.
 
+[git]: https://github.com/mvasilkov/michikoid
 [ts-morph]: https://github.com/dsherret/ts-morph
+
+## Motivation
+
+Michikoid was written to help with code size optimization without sacrificing readability.
 
 ## Installation
 
@@ -16,15 +23,11 @@ npm install -g michikoid
 
 Pass a <kbd>tsconfig.json</kbd> file to work on an entire project and save changes to a different directory.
 
-```sh
-michikoid --project <tsconfig> <out_dir>
-```
+    michikoid --project <tsconfig> <out_dir>
 
 Alternatively, pass a <kbd>.ts</kbd> or <kbd>.js</kbd> file to handle it with default settings and print to the standard output.
 
-```sh
-michikoid <file>
-```
+    michikoid <file>
 
 The default settings are:
 
