@@ -44,11 +44,13 @@ export function expandInlineExp(file) {
         const rhs = hasInlineExpMacro(expstat)
         if (typeof rhs === 'undefined') return
 
-        console.log(`Found: ${expstat.print().trimEnd()}`)
+        const line = file.getFullText().slice(
+            expstat.getNonWhitespaceStart(), expstat.getTrailingTriviaEnd())
+        console.error(`Found: ${line}`)
 
         const exp = expstat.getExpressionIfKind(ts.SyntaxKind.BinaryExpression)
         if (!exp) {
-            console.log('Expected binary expression')
+            console.error('Expected binary expression')
             return
         }
 
@@ -61,7 +63,7 @@ export function expandInlineExp(file) {
             return node
         })
         if (!found) {
-            console.log('Expected to find a reference')
+            console.error('Expected to find a reference')
             return
         }
 

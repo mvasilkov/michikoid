@@ -51,31 +51,33 @@ export function expandAlias(file) {
         const count = hasAliasMacro(def)
         if (typeof count === 'undefined') return
 
-        console.log(`Found: ${def.print().trimEnd()}`)
+        const line = file.getFullText().slice(
+            def.getNonWhitespaceStart(), def.getTrailingTriviaEnd())
+        console.error(`Found: ${line}`)
 
         const dlist = def.getDeclarationList()
         const constDef = dlist.getFlags() & ts.NodeFlags.Const
         if (!constDef) {
-            console.log('Expected const')
+            console.error('Expected const')
             return
         }
 
         const decls = dlist.getDeclarations()
         if (decls.length !== 1) {
-            console.log('Expected single declaration')
+            console.error('Expected single declaration')
             return
         }
 
         const decl = decls.pop()
         const alias = decl.getNameNode()
         if (!alias.isKind(ts.SyntaxKind.Identifier)) {
-            console.log('Expected identifier')
+            console.error('Expected identifier')
             return
         }
 
         const value = decl.getInitializer()
         if (!value) {
-            console.log('Expected initializer')
+            console.error('Expected initializer')
             return
         }
 
@@ -84,7 +86,7 @@ export function expandAlias(file) {
          */
         const refs = alias.findReferencesAsNodes()
         if (count !== unlimited && refs.length !== count) {
-            console.log(`Expected ${count} references, found ${refs.length}`)
+            console.error(`Expected ${count} references, found ${refs.length}`)
             return
         }
 

@@ -56,13 +56,13 @@ function main(projectFile, outDir) {
     outDir = resolve(outDir)
 
     if (!statSync(projectFile).isFile()) {
-        console.log(`${projectFile} is not a file`)
+        console.error(`${projectFile} is not a file`)
         return
     }
 
     const outStats = statSync(outDir, { throwIfNoEntry: false })
     if (outStats && !outStats.isDirectory()) {
-        console.log(`${outDir} exists and is not a directory`)
+        console.error(`${outDir} exists and is not a directory`)
         return
     }
 
@@ -70,7 +70,7 @@ function main(projectFile, outDir) {
         mkdirSync(outDir, { recursive: true })
     }
 
-    console.log(`Loading project file: ${projectFile}`)
+    console.error(`Loading project file: ${projectFile}`)
 
     const project = new Project({
         tsConfigFilePath: projectFile,
@@ -78,7 +78,7 @@ function main(projectFile, outDir) {
 
     const diagnostics = project.getPreEmitDiagnostics()
     if (diagnostics.length) {
-        console.log(project.formatDiagnosticsWithColorAndContext(diagnostics))
+        console.error(project.formatDiagnosticsWithColorAndContext(diagnostics))
         return
     }
 
@@ -95,7 +95,7 @@ function main(projectFile, outDir) {
     const projectDir = dirname(projectFile)
     sourceFiles.forEach(file => {
         const relativePath = relative(projectDir, file.getFilePath())
-        console.log(`Writing: ${relativePath}`)
+        console.error(`Writing: ${relativePath}`)
 
         const outPath = resolve(outDir, relativePath)
 
@@ -118,8 +118,8 @@ function cli() {
 }
 
 function usage() {
-    console.log('Usage: michikoid --project <tsconfig> <out_dir>')
-    console.log('       michikoid <file>')
+    console.error('Usage: michikoid --project <tsconfig> <out_dir>')
+    console.error('       michikoid <file>')
 }
 
 if (cli()) {
@@ -134,13 +134,13 @@ if (cli()) {
             if (infile === '-v' || infile === '--version') {
                 const packagePath = resolve(fileURLToPath(import.meta.url), '../package.json')
                 const packageFile = JSON.parse(readFileSync(packagePath, { encoding: 'utf8' }))
-                console.log(packageFile.version)
+                console.error(packageFile.version)
                 break
             }
             infile = resolve(infile)
 
             if (!statSync(infile).isFile()) {
-                console.log(`${infile} is not a file`)
+                console.error(`${infile} is not a file`)
                 break
             }
 

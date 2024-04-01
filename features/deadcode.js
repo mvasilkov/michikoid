@@ -28,7 +28,9 @@ export function expandDeadCode(file) {
     file.forEachDescendant((node, traversal) => {
         if (!hasDeadCodeMacro(node)) return
 
-        console.log(`Found: ${node.print().trimEnd()}`)
+        const line = file.getFullText().slice(
+            node.getNonWhitespaceStart(), node.getTrailingTriviaEnd())
+        console.error(`Found: ${line}`)
         traversal.skip()
         found.push(node)
     })
