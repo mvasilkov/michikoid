@@ -9,7 +9,7 @@
 import { mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, relative, resolve } from 'node:path'
 import { argv, stdout } from 'node:process'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { ModuleKind, Project, ScriptTarget } from 'ts-morph'
 
@@ -129,6 +129,12 @@ if (cli()) {
             let infile = args.pop()
             if (infile === '-h' || infile === '--help') {
                 usage()
+                break
+            }
+            if (infile === '-v' || infile === '--version') {
+                const packagePath = resolve(fileURLToPath(import.meta.url), '../package.json')
+                const packageFile = JSON.parse(readFileSync(packagePath, { encoding: 'utf8' }))
+                console.log(packageFile.version)
                 break
             }
             infile = resolve(infile)
