@@ -6,7 +6,7 @@
 
 import { ts } from 'ts-morph'
 
-import { replace } from './shared.js'
+import { printError, printFound, replace } from './shared.js'
 
 const unlimited = -1
 
@@ -53,31 +53,31 @@ export function expandAlias(file) {
 
         const line = file.getFullText().slice(
             def.getNonWhitespaceStart(), def.getTrailingTriviaEnd())
-        console.error(`Found: ${line}`)
+        printFound(line)
 
         const dlist = def.getDeclarationList()
         const constDef = dlist.getFlags() & ts.NodeFlags.Const
         if (!constDef) {
-            console.error('Expected const')
+            printError('Expected const')
             return
         }
 
         const decls = dlist.getDeclarations()
         if (decls.length !== 1) {
-            console.error('Expected single declaration')
+            printError('Expected single declaration')
             return
         }
 
         const decl = decls.pop()
         const alias = decl.getNameNode()
         if (!alias.isKind(ts.SyntaxKind.Identifier)) {
-            console.error('Expected identifier')
+            printError('Expected identifier')
             return
         }
 
         const value = decl.getInitializer()
         if (!value) {
-            console.error('Expected initializer')
+            printError('Expected initializer')
             return
         }
 
@@ -86,7 +86,8 @@ export function expandAlias(file) {
          */
         const refs = alias.findReferencesAsNodes()
         if (count !== unlimited && refs.length !== count) {
-            console.error(`Expected ${count} references, found ${refs.length}`)
+            const s = count === 1 ? '' : 's'
+            printError(`Expected ${count} reference${s}, found ${refs.length}`)
             return
         }
 

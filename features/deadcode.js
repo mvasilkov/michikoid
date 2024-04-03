@@ -6,6 +6,8 @@
 
 import { ts } from 'ts-morph'
 
+import { printFound } from './shared.js'
+
 /**
  * @param {import('ts-morph').Node<ts.Node>} node
  */
@@ -30,7 +32,7 @@ export function expandDeadCode(file) {
 
         const line = file.getFullText().slice(
             node.getNonWhitespaceStart(), node.getTrailingTriviaEnd())
-        console.error(`Found: ${line}`)
+        printFound(line)
         traversal.skip()
         found.push(node)
     })

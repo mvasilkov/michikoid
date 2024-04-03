@@ -6,7 +6,7 @@
 
 import { ts } from 'ts-morph'
 
-import { nodesEqual, replace } from './shared.js'
+import { nodesEqual, printError, printFound, replace } from './shared.js'
 
 /**
  * @param {import('ts-morph').ExpressionStatement} expstat
@@ -46,11 +46,11 @@ export function expandInlineExp(file) {
 
         const line = file.getFullText().slice(
             expstat.getNonWhitespaceStart(), expstat.getTrailingTriviaEnd())
-        console.error(`Found: ${line}`)
+        printFound(line)
 
         const exp = expstat.getExpressionIfKind(ts.SyntaxKind.BinaryExpression)
         if (!exp) {
-            console.error('Expected binary expression')
+            printError('Expected binary expression')
             return
         }
 
@@ -63,7 +63,7 @@ export function expandInlineExp(file) {
             return node
         })
         if (!found) {
-            console.error('Expected to find a reference')
+            printError('Expected to find a reference')
             return
         }
 

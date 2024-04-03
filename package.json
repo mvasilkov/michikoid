@@ -28,6 +28,7 @@
   "author": "Mark Vasilkov (https://github.com/mvasilkov)",
   "license": "MIT",
   "dependencies": {
+    "ansi-styles": "^6.2.1",
     "ts-morph": "^22.0.0"
   },
   "scripts": {

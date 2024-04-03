@@ -4,7 +4,28 @@
  */
 'use strict'
 
+import ansi from 'ansi-styles'
 import { ts } from 'ts-morph'
+
+/**
+ * @param {string} line
+ */
+export function printFound(line) {
+    console.error(`${ansi.greenBright.open}Found: ${line}${ansi.greenBright.close}`)
+}
+
+/**
+ * @param {string} line
+ */
+export function printError(line) {
+    console.error([
+        ansi.bgYellowBright.open,
+        ansi.black.open,
+        line,
+        ansi.black.close,
+        ansi.bgYellowBright.close,
+    ].join(''))
+}
 
 /**
  * @param {import('ts-morph').Node<ts.Node>} a
