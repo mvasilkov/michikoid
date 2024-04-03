@@ -32,7 +32,7 @@ export function expandDeadCode(file) {
 
         const line = file.getFullText().slice(
             node.getNonWhitespaceStart(), node.getTrailingTriviaEnd())
-        printFound(line)
+        printFound(file, line)
         traversal.skip()
         found.push(node)
     })

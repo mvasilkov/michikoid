@@ -4,14 +4,33 @@
  */
 'use strict'
 
+import { relative } from 'node:path'
+
 import ansi from 'ansi-styles'
 import { ts } from 'ts-morph'
 
 /**
+ * @type {string | null}
+ */
+let projectDir = null
+
+/**
+ * @param {string} dir
+ */
+export function setProjectDir(dir) {
+    projectDir = dir
+}
+
+/**
+ * @param {import('ts-morph').SourceFile} file
  * @param {string} line
  */
-export function printFound(line) {
+export function printFound(file, line) {
     console.error(`${ansi.greenBright.open}Found: ${line}${ansi.greenBright.close}`)
+    if (projectDir) {
+        const path = relative(projectDir, file.getFilePath())
+        console.error(`${ansi.blueBright.open}In: ${path}${ansi.blueBright.close}`)
+    }
 }
 
 /**

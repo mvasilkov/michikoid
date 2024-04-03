@@ -46,7 +46,7 @@ export function expandInlineExp(file) {
 
         const line = file.getFullText().slice(
             expstat.getNonWhitespaceStart(), expstat.getTrailingTriviaEnd())
-        printFound(line)
+        printFound(file, line)
 
         const exp = expstat.getExpressionIfKind(ts.SyntaxKind.BinaryExpression)
         if (!exp) {

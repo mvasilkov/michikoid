@@ -1,6 +1,6 @@
 {
   "name": "michikoid",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Michikoid is a TypeScript and JavaScript macro processor, in the sense that it copies its input to the output, expanding macros as it goes.",
   "keywords": [
     "macro",

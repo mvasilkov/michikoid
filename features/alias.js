@@ -53,7 +53,7 @@ export function expandAlias(file) {
 
         const line = file.getFullText().slice(
             def.getNonWhitespaceStart(), def.getTrailingTriviaEnd())
-        printFound(line)
+        printFound(file, line)
 
         const dlist = def.getDeclarationList()
         const constDef = dlist.getFlags() & ts.NodeFlags.Const

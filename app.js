@@ -16,6 +16,7 @@ import { ModuleKind, Project, ScriptTarget } from 'ts-morph'
 import { expandAlias } from './features/alias.js'
 import { expandDeadCode } from './features/deadcode.js'
 import { expandInlineExp } from './features/inlineexp.js'
+import { setProjectDir } from './features/shared.js'
 
 /**
  * @param {import('ts-morph').SourceFile[]} sourceFiles
@@ -82,6 +83,9 @@ function main(projectFile, outDir) {
         return
     }
 
+    const projectDir = dirname(projectFile)
+    setProjectDir(projectDir)
+
     const sourceFiles = project.getSourceFiles()
     expandMacros(sourceFiles)
 
@@ -92,7 +96,6 @@ function main(projectFile, outDir) {
     const dirCache = Object.create(null)
     dirCache[outDir] = true
 
-    const projectDir = dirname(projectFile)
     sourceFiles.forEach(file => {
         const relativePath = relative(projectDir, file.getFilePath())
         console.error(`Writing: ${relativePath}`)
