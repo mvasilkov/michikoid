@@ -23,11 +23,11 @@ npm install -g michikoid
 
 Pass a <kbd>tsconfig.json</kbd> file to work on an entire project and save changes to a different directory.
 
-    michikoid --project <tsconfig> <out_dir>
+    michikoid [--enable <features>] --project <tsconfig> <out_dir>
 
 Alternatively, pass a <kbd>.ts</kbd> or <kbd>.js</kbd> file to handle it with default settings and print to the standard output.
 
-    michikoid <file>
+    michikoid [--enable <features>] <file>
 
 The default settings are:
 

@@ -18,14 +18,19 @@ import { expandDeadCode } from './features/deadcode.js'
 import { expandInlineExp } from './features/inlineexp.js'
 import { setProjectDir } from './features/shared.js'
 
+const existingFeatures = new Set(['alias', 'deadcode', 'inlineexp'])
+
 /**
  * @param {import('ts-morph').SourceFile[]} sourceFiles
  */
-export function expandMacros(sourceFiles) {
+export function expandMacros(sourceFiles, features) {
+    features = features ?? existingFeatures.reduce((acc, feat) =>
+        ((acc[feat] = true), acc), Object.create(null))
+
     sourceFiles.forEach(file => {
-        expandAlias(file)
-        expandDeadCode(file)
-        expandInlineExp(file)
+        if (features.alias) expandAlias(file)
+        if (features.deadcode) expandDeadCode(file)
+        if (features.inlineexp) expandInlineExp(file)
     })
 }
 
@@ -33,7 +38,7 @@ export function expandMacros(sourceFiles) {
  * @param {string} text
  * @returns {string}
  */
-export function expandMacrosInString(text, filePath = 'infile.ts') {
+export function expandMacrosInString(text, filePath = 'infile.ts', features) {
     const project = new Project({
         compilerOptions: {
             target: ScriptTarget.ES2021,
@@ -43,7 +48,7 @@ export function expandMacrosInString(text, filePath = 'infile.ts') {
     })
 
     const infile = project.createSourceFile(filePath, text)
-    expandMacros([infile])
+    expandMacros([infile], features)
 
     return infile.getFullText()
 }
@@ -52,7 +57,7 @@ export function expandMacrosInString(text, filePath = 'infile.ts') {
  * @param {string} projectFile
  * @param {string} outDir
  */
-function main(projectFile, outDir) {
+function main(projectFile, outDir, features) {
     projectFile = resolve(projectFile)
     outDir = resolve(outDir)
 
@@ -87,7 +92,7 @@ function main(projectFile, outDir) {
     setProjectDir(projectDir)
 
     const sourceFiles = project.getSourceFiles()
-    expandMacros(sourceFiles)
+    expandMacros(sourceFiles, features)
 
     /**
      * Keep track of directories we've created.
@@ -121,12 +126,26 @@ function cli() {
 }
 
 function usage() {
-    console.error('Usage: michikoid --project <tsconfig> <out_dir>')
-    console.error('       michikoid <file>')
+    console.error('Usage: michikoid [--enable <features>] --project <tsconfig> <out_dir>')
+    console.error('       michikoid [--enable <features>] <file>')
 }
 
 if (cli()) {
     const args = argv.slice(2)
+    if (args.length > 2 && args[0] === '--enable') {
+        const enable = args[1].split(',')
+        const features = Object.create(null)
+        for (const feat of enable) {
+            if (existingFeatures.has(feat)) features[feat] = true
+            else {
+                console.error(`Expected feature to be one of: ${Array.from(existingFeatures).join(', ')}`)
+                process.exit()
+            }
+        }
+
+        args.splice(0, 2)
+    }
+
     switch (args.length) {
         case 1: // <file>
             let infile = args.pop()
@@ -148,13 +167,13 @@ if (cli()) {
             }
 
             const text = readFileSync(infile, { encoding: 'utf8' })
-            const out = expandMacrosInString(text, basename(infile))
+            const out = expandMacrosInString(text, basename(infile), features)
             stdout.write(out)
             break
 
         case 3: // --project <tsconfig> <out_dir>
             const p = args.shift()
-            if (p === '-p' || p === '--project') main(...args)
+            if (p === '-p' || p === '--project') main(...args, features)
             else usage()
             break
 
