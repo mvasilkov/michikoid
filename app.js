@@ -10,6 +10,7 @@ import { mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from '
 import { basename, dirname, relative, resolve } from 'node:path'
 import { argv, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { parseArgs } from 'node:util'
 
 import { ModuleKind, Project, ScriptTarget } from 'ts-morph'
 
@@ -57,7 +58,7 @@ export function expandMacrosInString(text, filePath = 'infile.ts', features) {
  * @param {string} projectFile
  * @param {string} outDir
  */
-function main(projectFile, outDir, features) {
+function michikoidMain(projectFile, outDir, features) {
     projectFile = resolve(projectFile)
     outDir = resolve(outDir)
 
@@ -128,13 +129,25 @@ function cli() {
 function usage() {
     console.error('Usage: michikoid [--enable <features>] --project <tsconfig> <out_dir>')
     console.error('       michikoid [--enable <features>] <file>')
+    console.error(`Features: ${Array.from(existingFeatures).join(', ')}`)
 }
 
 if (cli()) {
-    const args = argv.slice(2)
-    if (args.length > 2 && args[0] === '--enable') {
-        const enable = args[1].split(',')
-        const features = Object.create(null)
+    const flags = parseArgs({
+        allowPositionals: true,
+        options: {
+            enable: { type: 'string' },
+            project: { type: 'string', short: 'p' },
+            help: { type: 'boolean', short: 'h' },
+            version: { type: 'boolean', short: 'v' },
+        },
+        strict: true,
+    })
+
+    let features = null
+    if ('enable' in flags.values) {
+        features = Object.create(null)
+        const enable = flags.values.enable.split(',')
         for (const feat of enable) {
             if (existingFeatures.has(feat)) features[feat] = true
             else {
@@ -142,42 +155,41 @@ if (cli()) {
                 process.exit()
             }
         }
-
-        args.splice(0, 2)
     }
 
-    switch (args.length) {
-        case 1: // <file>
-            let infile = args.pop()
-            if (infile === '-h' || infile === '--help') {
-                usage()
-                break
-            }
-            if (infile === '-v' || infile === '--version') {
-                const packagePath = resolve(fileURLToPath(import.meta.url), '../package.json')
-                const packageFile = JSON.parse(readFileSync(packagePath, { encoding: 'utf8' }))
-                console.error(packageFile.version)
-                break
-            }
-            infile = resolve(infile)
+    if (flags.values.help) {
+        usage()
+        process.exit()
+    }
 
-            if (!statSync(infile).isFile()) {
-                console.error(`${infile} is not a file`)
-                break
-            }
+    if (flags.values.version) {
+        const packagePath = resolve(fileURLToPath(import.meta.url), '../package.json')
+        const packageFile = JSON.parse(readFileSync(packagePath, { encoding: 'utf8' }))
+        console.error(`Michikoid ${packageFile.version}`)
+        process.exit()
+    }
 
-            const text = readFileSync(infile, { encoding: 'utf8' })
-            const out = expandMacrosInString(text, basename(infile), features)
-            stdout.write(out)
-            break
+    let infile = flags.positionals.pop()
+    if (!infile || flags.positionals.length) {
+        usage()
+        process.exit()
+    }
 
-        case 3: // --project <tsconfig> <out_dir>
-            const p = args.shift()
-            if (p === '-p' || p === '--project') main(...args, features)
-            else usage()
-            break
+    // --project <tsconfig> <out_dir>
+    if ('project' in flags.values) {
+        michikoidMain(flags.values.project, infile, features)
+    }
+    // <file>
+    else {
+        infile = resolve(infile)
 
-        default:
-            usage()
+        if (!statSync(infile).isFile()) {
+            console.error(`${infile} is not a file`)
+            process.exit()
+        }
+
+        const text = readFileSync(infile, { encoding: 'utf8' })
+        const out = expandMacrosInString(text, basename(infile), features)
+        stdout.write(out)
     }
 }
