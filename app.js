@@ -165,7 +165,7 @@ if (cli()) {
     if (flags.values.version) {
         const packagePath = resolve(fileURLToPath(import.meta.url), '../package.json')
         const packageFile = JSON.parse(readFileSync(packagePath, { encoding: 'utf8' }))
-        console.error(`Michikoid ${packageFile.version}`)
+        console.error(`Michikoid version ${packageFile.version}`)
         process.exit()
     }
 
