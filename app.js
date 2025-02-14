@@ -2,7 +2,7 @@
 
 /** This file is part of Michikoid.
  * https://github.com/mvasilkov/michikoid
- * @license MIT | Copyright (c) 2023, 2024 Mark Vasilkov
+ * @license MIT | Copyright (c) 2023, 2024, 2025 Mark Vasilkov
  */
 'use strict'
 
@@ -25,7 +25,7 @@ const existingFeatures = new Set(['alias', 'deadcode', 'inlineexp'])
  * @param {import('ts-morph').SourceFile[]} sourceFiles
  */
 export function expandMacros(sourceFiles, features) {
-    features = features ?? existingFeatures.reduce((acc, feat) =>
+    features = features ?? Array.from(existingFeatures).reduce((acc, feat) =>
         ((acc[feat] = true), acc), Object.create(null))
 
     sourceFiles.forEach(file => {

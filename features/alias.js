@@ -1,6 +1,6 @@
 /** This file is part of Michikoid.
  * https://github.com/mvasilkov/michikoid
- * @license MIT | Copyright (c) 2023, 2024 Mark Vasilkov
+ * @license MIT | Copyright (c) 2023, 2024, 2025 Mark Vasilkov
  */
 'use strict'
 
