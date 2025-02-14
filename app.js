@@ -42,7 +42,7 @@ export function expandMacros(sourceFiles, features) {
 export function expandMacrosInString(text, filePath = 'infile.ts', features) {
     const project = new Project({
         compilerOptions: {
-            target: ScriptTarget.ES2021,
+            target: ScriptTarget.ES2023,
             module: ModuleKind.ES2022,
         },
         useInMemoryFileSystem: true,

@@ -34,7 +34,7 @@ The default settings are:
 ```json
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2023",
     "module": "ES2022"
   }
 }
