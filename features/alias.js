@@ -75,6 +75,8 @@ export function expandAlias(file) {
             return
         }
 
+        const type = decl.getTypeNode()
+
         const value = decl.getInitializer()
         if (!value) {
             printError('Expected initializer')
@@ -91,7 +93,7 @@ export function expandAlias(file) {
             return
         }
 
-        refs.forEach(ref => replace(ref, value))
+        refs.forEach(ref => replace(ref, value, type))
 
         def.remove()
     })

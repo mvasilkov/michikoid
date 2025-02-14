@@ -56,9 +56,30 @@ const out4 = `
 console.log(['type' + 'script'])
 `
 
+const in5 = `
+type A = { a: 'a' }
+type B = A & { b?: 'b' }
+
+export function ab() {
+    const a: A = { a: 'a' }
+    const b: B = a // .Alias
+    return b.b = 'b'
+}
+`
+const out5 = `
+type A = { a: 'a' }
+type B = A & { b?: 'b' }
+
+export function ab() {
+    const a: A = { a: 'a' }
+    return (<B>a).b = 'b'
+}
+`
+
 test('Alias', () => {
     assert.equal(expandMacrosInString(in1), out1)
     assert.equal(expandMacrosInString(in2), out2)
     assert.equal(expandMacrosInString(in3), out3)
     assert.equal(expandMacrosInString(in4), out4)
+    assert.equal(expandMacrosInString(in5), out5)
 })
