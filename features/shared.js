@@ -89,13 +89,13 @@ function nodeNeedsParentheses(node) {
 /**
  * @param {import('ts-morph').Node<ts.Node>} old
  * @param {import('ts-morph').Node<ts.Node>} updated
- * @param {import('ts-morph').TypeNode} type
+ * @param {import('ts-morph').TypeNode} [type]
  */
 export function replace(old, updated, type) {
     const upd = (type ? '<' + type.getText() + '>' : '') + updated.getText()
 
     old.replaceWithText(
-        type || nodeNeedsParentheses(updated) && !nodeInParentheses(old) ?
+        (type || nodeNeedsParentheses(updated)) && !nodeInParentheses(old) ?
             '(' + upd + ')' : upd
     )
 }

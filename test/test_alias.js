@@ -76,10 +76,31 @@ export function ab() {
 }
 `
 
+const in6 = `
+type A = { a: 'a' }
+type B = A & { b?: 'b' }
+
+export function ab() {
+    const a: A = { a: 'a' }
+    const b: B = a // .Alias
+    return [b]
+}
+`
+const out6 = `
+type A = { a: 'a' }
+type B = A & { b?: 'b' }
+
+export function ab() {
+    const a: A = { a: 'a' }
+    return [<B>a]
+}
+`
+
 test('Alias', () => {
     assert.equal(expandMacrosInString(in1), out1)
     assert.equal(expandMacrosInString(in2), out2)
     assert.equal(expandMacrosInString(in3), out3)
     assert.equal(expandMacrosInString(in4), out4)
     assert.equal(expandMacrosInString(in5), out5)
+    assert.equal(expandMacrosInString(in6), out6)
 })
